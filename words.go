@@ -2,15 +2,10 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"math/rand"
 	"os"
 	"time"
 )
-
-func main() {
-	fmt.Println(getFileWords("words.txt"))
-}
 
 func getFileWords(path string) string {
 	f, _ := os.Open(path)
@@ -24,4 +19,14 @@ func getFileWords(path string) string {
 	}
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	return result[r.Intn(cpt)]
+}
+
+func formatWord(word string) string {
+	sSlice := []rune(word)
+	for i := 0; i < len(sSlice); i++ {
+		if sSlice[i] < 'a' || sSlice[i] > 'z' {
+			sSlice[i] = ' '
+		}
+	}
+	return string(sSlice)
 }
