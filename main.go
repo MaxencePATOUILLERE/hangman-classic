@@ -36,7 +36,7 @@ func game(data HangManData) {
 			fmt.Println("Congratulation you found the word ! ")
 			return
 		}
-		fmt.Print("Entrez une lettre : ")
+		fmt.Print("Enter a letter : ")
 		fmt.Scanln(&letter)
 		//s_letter := []rune(letter)
 		if isUsed(data, letter) {

@@ -85,5 +85,5 @@ func printHangMan(failAttempts int) {
 		}
 		fmt.Println("=========")
 	}
-	fmt.Println("La lettre n'est pas comprise dans le mot")
+	fmt.Println("The letter is not in the word.")
 }
