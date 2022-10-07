@@ -1,5 +1,9 @@
 package main
 
+import (
+	"fmt"
+)
+
 type HangManData struct {
 	word     string // Word composed of '_', ex: H_ll_
 	toFind   string // Final word chosen by the program at the beginning. It is the word to find
@@ -25,7 +29,24 @@ func main() {
 }
 
 func game(data HangManData) {
+	var letter string
 	for i := 0; i < 10; i++ {
-
+		fmt.Scanln(&letter)
+		s_letter := []rune(letter)
+		if len(s_letter) == 1 {
+			fmt.Println("Bad input, try again.")
+			i--
+		}
+		if s_letter[0] >= 'a' && s_letter[0] <= 'z' {
+			if !trys(data, string(letter)) {
+				data.attempts++
+				printHangMan(data.attempts)
+			} else {
+				trys(data, data.toFind)
+			}
+		} else {
+			fmt.Println("Bad input, try again.")
+			i--
+		}
 	}
 }
