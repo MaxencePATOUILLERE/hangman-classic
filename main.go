@@ -32,15 +32,16 @@ func main() {
 func game(data HangManData) {
 	var letter string
 	for i := 0; i < 10; i++ {
+		fmt.Print("Entrez une lettre : ")
 		fmt.Scanln(&letter)
 		//s_letter := []rune(letter)
 		if isGood(data.toFind, string(letter)) {
 			newData := trys(data, letter)
 			data.word = newData.word
+			i--
 		} else {
 			data.attempts++
 			printHangMan(data.attempts)
-			i--
 		}
 		data.used = append(data.used, rune(letter[0]))
 
