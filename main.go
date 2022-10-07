@@ -32,21 +32,12 @@ func game(data HangManData) {
 	var letter string
 	for i := 0; i < 10; i++ {
 		fmt.Scanln(&letter)
-		s_letter := []rune(letter)
-		if len(s_letter) == 1 {
-			fmt.Println("Bad input, try again.")
-			i--
-		}
-		if s_letter[0] >= 'a' && s_letter[0] <= 'z' {
-			if !trys(data, string(letter)) {
-				data.attempts++
-				printHangMan(data.attempts)
-			} else {
-				trys(data, data.toFind)
-			}
+		//s_letter := []rune(letter)
+		if isGood(data.toFind, string(letter)) {
+			trys(data, data.toFind)
 		} else {
-			fmt.Println("Bad input, try again.")
-			i--
+			data.attempts++
+			printHangMan(data.attempts)
 		}
 	}
 }

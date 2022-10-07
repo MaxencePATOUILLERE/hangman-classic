@@ -37,7 +37,7 @@ func convertInStr(liste []string) string {
 
 func isGood(str string, test string) bool {
 	for i := 0; i < len(str); i++ {
-		if str[i] != test[i] {
+		if str[i] == test[0] {
 			return true
 		}
 	}
