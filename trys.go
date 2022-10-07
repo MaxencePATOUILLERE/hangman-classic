@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func trys(data HangManData, testLetter string) bool {
+func trys(data HangManData, testLetter string) HangManData {
 	listemystery := []string{}
 	Index := findIndexLetter(testLetter, data.toFind)
 	for i := 0; i < len(data.word); i++ {
@@ -11,10 +11,9 @@ func trys(data HangManData, testLetter string) bool {
 	for i := 0; i < len(Index); i++ {
 		listemystery[Index[i]] = testLetter
 	}
-	isGoodResult := isGood(convertInStr(listemystery), data.word)
 	data.word = convertInStr(listemystery)
 	fmt.Println(data.word)
-	return isGoodResult
+	return data
 }
 
 func findIndexLetter(TestLetter string, Words string) []int {
