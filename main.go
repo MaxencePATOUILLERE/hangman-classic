@@ -20,6 +20,7 @@ func main() {
 		} else {
 			hidden += "_"
 		}
+		hidden += " "
 	}
 	GameData := HangManData{
 		word:     hidden,
@@ -33,11 +34,14 @@ func game(data HangManData) {
 	var letter string
 	for i := 0; i < 10; i++ {
 		if finish(data) {
-			fmt.Println("Congratulation you found the word ! ")
+			fmt.Println("Congrats !")
 			return
 		}
-		fmt.Print("Enter a letter : ")
+		fmt.Print("Choose: ")
 		fmt.Scanln(&letter)
+		if len(letter) > 1 || letter[0] == ' ' {
+
+		}
 		//s_letter := []rune(letter)
 		if isUsed(data, letter) {
 			fmt.Println("Letter already used.")
