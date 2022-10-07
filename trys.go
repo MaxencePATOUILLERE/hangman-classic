@@ -11,8 +11,10 @@ func trys(data HangManData, testLetter string) bool {
 	for i := 0; i < len(Index); i++ {
 		listemystery[Index[i]] = testLetter
 	}
-	fmt.Println(convertInStr(listemystery))
-	return isGood(convertInStr(listemystery), data.word)
+	isGoodResult := isGood(convertInStr(listemystery), data.word)
+	data.word = convertInStr(listemystery)
+	fmt.Println(data.word)
+	return isGoodResult
 }
 
 func findIndexLetter(TestLetter string, Words string) []int {
