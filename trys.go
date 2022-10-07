@@ -3,6 +3,9 @@ package main
 import "fmt"
 
 func trys(data HangManData, testLetter string) HangManData {
+	if isUsed(data, testLetter) {
+		return data
+	}
 	listemystery := []string{}
 	Index := findIndexLetter(testLetter, data.toFind)
 	for i := 0; i < len(data.word); i++ {
@@ -46,6 +49,15 @@ func isGood(str string, test string) bool {
 func finish(data HangManData) bool {
 	if data.word == data.toFind {
 		return true
+	}
+	return false
+}
+
+func isUsed(data HangManData, letter string) bool {
+	for i := 0; i < len(data.used); i++ {
+		if data.used[i] == rune(letter[0]) {
+			return true
+		}
 	}
 	return false
 }
