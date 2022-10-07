@@ -42,3 +42,10 @@ func isGood(str string, test string) bool {
 	}
 	return false
 }
+
+func finish(data HangManData) bool {
+	if data.word == data.toFind {
+		return true
+	}
+	return false
+}
