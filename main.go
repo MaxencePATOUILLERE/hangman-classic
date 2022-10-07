@@ -32,10 +32,17 @@ func main() {
 func game(data HangManData) {
 	var letter string
 	for i := 0; i < 10; i++ {
+		if finish(data) {
+			fmt.Println("Congratulation you found the word ! ")
+			return
+		}
 		fmt.Print("Entrez une lettre : ")
 		fmt.Scanln(&letter)
 		//s_letter := []rune(letter)
-		if isGood(data.toFind, string(letter)) {
+		if isUsed(data, letter) {
+			fmt.Println("Letter already used.")
+			i--
+		} else if isGood(data.toFind, string(letter)) {
 			newData := trys(data, letter)
 			data.word = newData.word
 			i--
@@ -44,15 +51,7 @@ func game(data HangManData) {
 			printHangMan(data.attempts)
 		}
 		data.used = append(data.used, rune(letter[0]))
-
 	}
-}
-
-func isUsed(data HangManData, letter string) bool {
-	for i := 0; i < len(data.used); i++ {
-		if data.used[i] == rune(letter[i]) {
-			return true
-		}
-	}
-	return false
+	print("You failed the word was : " + data.toFind)
+	return
 }
