@@ -7,7 +7,11 @@ func trys(data HangManData, testLetter string) HangManData {
 		return data
 	}
 	listemystery := []string{}
-	Index := findIndexLetter(testLetter, data.toFind)
+	editedToFind := ""
+	for i := 0; i < len(data.toFind); i++ {
+		editedToFind = editedToFind + string(data.toFind[i]) + " "
+	}
+	Index := findIndexLetter(testLetter, editedToFind)
 	for i := 0; i < len(data.word); i++ {
 		listemystery = append(listemystery, string(data.word[i]))
 	}

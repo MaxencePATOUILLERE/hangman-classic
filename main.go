@@ -44,11 +44,18 @@ func game(data HangManData) {
 				return
 			} else {
 				data.attempts += 2
+				fmt.Println("Bad word try again ! " + string(rune(-data.attempts+58)) + " left.")
 			}
 		} else {
 			//s_letter := []rune(letter)
 			if isUsed(data, letter) {
-				fmt.Println("Letter already used.")
+				fmt.Println("Letter already used. Letter used are :")
+				rune_slice := []rune(data.used)
+				for i := 0; i < len(rune_slice); i++ {
+					fmt.Print(string(rune_slice[i]))
+					fmt.Print(" ")
+				}
+				fmt.Print("\n")
 			} else if isGood(data.toFind, string(letter)) {
 				newData := trys(data, letter)
 				data.word = newData.word
