@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 )
 
 type HangManData struct {
@@ -12,7 +13,8 @@ type HangManData struct {
 }
 
 func main() {
-	word := formatWord(getFileWords("words.txt"))
+	args := os.Args
+	word := formatWord(getFileWords(args[1]))
 	hidden := ""
 	for i := 0; i < len(word); i++ {
 		if word[i] == ' ' {
