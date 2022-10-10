@@ -55,7 +55,7 @@ func finish(data HangManData) bool {
 
 func isUsed(data HangManData, letter string) bool {
 	for i := 0; i < len(data.used); i++ {
-		if data.used[i] == rune(letter[0]) {
+		if data.used[i] == rune(letter[0]) || letter[0] == ' ' {
 			return true
 		}
 	}

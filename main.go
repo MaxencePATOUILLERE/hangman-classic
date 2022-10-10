@@ -31,29 +31,33 @@ func main() {
 }
 func game(data HangManData) {
 	var letter string
-	for i := 0; i < 10; i++ {
+	for data.attempts < 10 {
 		if finish(data) {
 			fmt.Println("Congrats !")
 			return
 		}
 		fmt.Print("Choose: ")
 		fmt.Scanln(&letter)
-		if len(letter) > 1 || letter[0] == ' ' {
-		}
-		//s_letter := []rune(letter)
-		if isUsed(data, letter) {
-			fmt.Println("Letter already used.")
-			i--
-		} else if isGood(data.toFind, string(letter)) {
-			newData := trys(data, letter)
-			data.word = newData.word
-			i--
+		if len(letter) > 1 {
+			if letter == data.toFind {
+				fmt.Println("Congrats !")
+				return
+			} else {
+				data.attempts += 2
+			}
 		} else {
-			data.attempts++
-			printHangMan(data.attempts)
+			//s_letter := []rune(letter)
+			if isUsed(data, letter) {
+				fmt.Println("Letter already used.")
+			} else if isGood(data.toFind, string(letter)) {
+				newData := trys(data, letter)
+				data.word = newData.word
+			} else {
+				data.attempts++
+				printHangMan(data.attempts)
+			}
+			data.used = append(data.used, rune(letter[0]))
 		}
-		data.used = append(data.used, rune(letter[0]))
 	}
 	print("You failed the word was : " + data.toFind)
-	return
 }
