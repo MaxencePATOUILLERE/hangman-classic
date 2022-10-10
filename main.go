@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 )
 
 type HangManData struct {
@@ -13,8 +12,7 @@ type HangManData struct {
 }
 
 func main() {
-	args := os.Args
-	word := formatWord(getFileWords(args[1]))
+	word := formatWord(getFileWords("words.txt"))
 	hidden := ""
 	for i := 0; i < len(word); i++ {
 		if word[i] == ' ' {
@@ -31,7 +29,6 @@ func main() {
 	}
 	game(GameData)
 }
-
 func game(data HangManData) {
 	var letter string
 	for i := 0; i < 10; i++ {
@@ -42,7 +39,6 @@ func game(data HangManData) {
 		fmt.Print("Choose: ")
 		fmt.Scanln(&letter)
 		if len(letter) > 1 || letter[0] == ' ' {
-
 		}
 		//s_letter := []rune(letter)
 		if isUsed(data, letter) {
