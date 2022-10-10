@@ -85,5 +85,5 @@ func printHangMan(failAttempts int) {
 		}
 		fmt.Println("=========")
 	}
-	fmt.Println("The letter is not in the word.")
+	fmt.Println("Not present in the word,", 10-failAttempts, "attempts remaining")
 }
