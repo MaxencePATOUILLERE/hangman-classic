@@ -1,13 +1,15 @@
 package main
 
-import "fmt"
-
 func trys(data HangManData, testLetter string) HangManData {
 	if isUsed(data, testLetter) {
 		return data
 	}
 	listemystery := []string{}
-	Index := findIndexLetter(testLetter, data.toFind)
+	editedToFind := ""
+	for i := 0; i < len(data.toFind); i++ {
+		editedToFind = editedToFind + string(data.toFind[i]) + " "
+	}
+	Index := findIndexLetter(testLetter, editedToFind)
 	for i := 0; i < len(data.word); i++ {
 		listemystery = append(listemystery, string(data.word[i]))
 	}
@@ -15,7 +17,7 @@ func trys(data HangManData, testLetter string) HangManData {
 		listemystery[Index[i]] = testLetter
 	}
 	data.word = convertInStr(listemystery)
-	fmt.Println(data.word)
+	printASCIIArt(data)
 	return data
 }
 
