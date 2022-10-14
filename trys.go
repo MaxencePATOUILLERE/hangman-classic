@@ -17,7 +17,7 @@ func trys(data HangManData, testLetter string) HangManData {
 		listemystery[Index[i]] = testLetter
 	}
 	data.word = convertInStr(listemystery)
-	printASCIIArt(data)
+	printASCIIArt(data, "thinkertoy")
 	return data
 }
 

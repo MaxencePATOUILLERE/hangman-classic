@@ -6,8 +6,15 @@ import (
 	"os"
 )
 
-func printASCIIArt(data HangManData) {
-	f, _ := os.Open("standard.txt")
+func printASCIIArt(data HangManData, typeAscii string) {
+	var f *os.File
+	if typeAscii == "standard" {
+		f, _ = os.Open("standard.txt")
+	} else if typeAscii == "shadow" {
+		f, _ = os.Open("shadow.txt")
+	} else {
+		f, _ = os.Open("thinkertoy.txt")
+	}
 	scanner := bufio.NewScanner(f)
 	var result []string
 	for scanner.Scan() {
@@ -18,7 +25,7 @@ func printASCIIArt(data HangManData) {
 		line := []string{}
 		for i := 0; i < len(data.word); i++ {
 			if data.word[i] == '_' {
-				line = append(line, result[115+j])
+				line = append(line, result[116+j])
 			} else if data.word[i] == ' ' {
 			} else {
 				line = append(line, result[298+j+int(rune(data.word[i]-97)*9)])
