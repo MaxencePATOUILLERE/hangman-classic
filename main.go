@@ -12,7 +12,7 @@ type HangManData struct {
 }
 
 func main() {
-	word := formatWord(getFileWords("words.txt"))
+	word := "zarbi"
 	hidden := ""
 	for i := 0; i < len(word); i++ {
 		if word[i] == ' ' {
