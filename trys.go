@@ -7,9 +7,14 @@ func trys(data HangManData, testLetter string) HangManData {
 		return data
 	}
 	listemystery := []string{}
-	Index := findIndexLetter(testLetter, data.toFind)
+	editedToFind := ""
+	for i := 0; i < len(data.toFind); i++ {
+		editedToFind = editedToFind + string(data.toFind[i]) + " "
+	}
+	Index := findIndexLetter(testLetter, editedToFind)
 	for i := 0; i < len(data.word); i++ {
 		listemystery = append(listemystery, string(data.word[i]))
+
 	}
 	for i := 0; i < len(Index); i++ {
 		listemystery[Index[i]] = testLetter
@@ -47,7 +52,19 @@ func isGood(str string, test string) bool {
 }
 
 func finish(data HangManData) bool {
-	if data.word == data.toFind {
+	word := ""
+	for i := 0; i < len(data.word); i++ {
+		if i < len(word)-3 && string(data.word[i]) == " " && string(data.word[i+1]) == " " && string(data.word[i+2]) == " " {
+			word += " "
+		}
+		if string(data.word[i]) != " " && string(data.word[i]) != "_" {
+			word += string(data.word[i])
+		}
+	}
+	if word == data.toFind {
+		return true
+	}
+	if data.attempts == 10 {
 		return true
 	}
 	return false
