@@ -7,10 +7,11 @@ import (
 )
 
 type HangManData struct {
-	word     string // Word composed of '_', ex: H_ll_
-	toFind   string // Final word chosen by the program at the beginning. It is the word to find
-	attempts int    // Number of attempts left
-	used     []rune
+	word      string // Word composed of '_', ex: H_ll_
+	toFind    string // Final word chosen by the program at the beginning. It is the word to find
+	attempts  int    // Number of attempts left
+	asciiType string // Which type of ascii you want
+	used      []rune
 }
 
 func main() {
@@ -35,6 +36,7 @@ func main() {
 }
 func game(data HangManData) {
 	var letter string
+
 	for !finish(data) {
 		fmt.Print("Choose: ")
 		fmt.Scanln(&letter)
