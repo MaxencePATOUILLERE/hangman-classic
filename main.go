@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
+	"time"
 )
 
 type HangManData struct {
@@ -12,7 +14,7 @@ type HangManData struct {
 }
 
 func main() {
-	word := "zarbi"
+	word := formatWord(getFileWords("words.txt"))
 	hidden := ""
 	for i := 0; i < len(word); i++ {
 		if word[i] == ' ' {
@@ -27,33 +29,48 @@ func main() {
 		toFind:   word,
 		attempts: 0,
 	}
+	fmt.Println(GameData.toFind)
+	GameData = reveal(GameData)
 	game(GameData)
 }
 func game(data HangManData) {
 	var letter string
-	for i := 0; i < 10; i++ {
-		if finish(data) {
-			fmt.Println("Congrats !")
-			return
-		}
+	for !finish(data) {
 		fmt.Print("Choose: ")
 		fmt.Scanln(&letter)
-		if len(letter) > 1 || letter[0] == ' ' {
-		}
-		//s_letter := []rune(letter)
-		if isUsed(data, letter) {
-			fmt.Println("Letter already used.")
-			i--
-		} else if isGood(data.toFind, string(letter)) {
-			newData := trys(data, letter)
-			data.word = newData.word
-			i--
+		if len(letter) == 1 && letter[0] != ' ' && isValid(rune(letter[0])) {
+			if isUsed(data, letter) {
+				fmt.Println("Letter already used.")
+			} else if isGood(data.toFind, string(letter)) {
+				newData := trys(data, letter)
+				data.word = newData.word
+			} else {
+				data.attempts++
+				printHangMan(data.attempts)
+			}
+			data.used = append(data.used, rune(letter[0]))
 		} else {
-			data.attempts++
-			printHangMan(data.attempts)
+			fmt.Println("Bad input")
 		}
-		data.used = append(data.used, rune(letter[0]))
 	}
-	print("You failed the word was : " + data.toFind)
-	return
+	if data.attempts == 10 {
+		print("You failed the word was : " + data.toFind)
+		return
+	}
+	print("Congrats !")
+}
+
+func reveal(data HangManData) HangManData {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	letter := rune(data.toFind[r.Intn(len(data.toFind))])
+	data = trys(data, string(letter))
+	data.used = append(data.used, letter)
+	return data
+}
+
+func isValid(l rune) bool {
+	if l >= 'A' && l <= 'Z' || l >= 'a' && l <= 'z' {
+		return true
+	}
+	return false
 }
