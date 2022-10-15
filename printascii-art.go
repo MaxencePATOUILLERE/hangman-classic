@@ -12,7 +12,7 @@ func printASCIIArt(data HangManData, typeAscii string) {
 		f, _ = os.Open("standard.txt")
 	} else if typeAscii == "shadow" {
 		f, _ = os.Open("shadow.txt")
-	} else {
+	} else if typeAscii == "thinkertoy" {
 		f, _ = os.Open("thinkertoy.txt")
 	}
 	scanner := bufio.NewScanner(f)

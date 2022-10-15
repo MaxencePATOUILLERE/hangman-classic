@@ -15,6 +15,7 @@ type HangManData struct {
 }
 
 func main() {
+	asciiType := ""
 	word := formatWord(getFileWords("words.txt"))
 	hidden := ""
 	for i := 0; i < len(word); i++ {
@@ -25,18 +26,19 @@ func main() {
 		}
 		hidden += " "
 	}
+	fmt.Print("choose ascii type (thinkertoy, standard, shadow): ")
+	fmt.Scanln(&asciiType)
 	GameData := HangManData{
-		word:     hidden,
-		toFind:   word,
-		attempts: 0,
+		word:      hidden,
+		toFind:    word,
+		attempts:  0,
+		asciiType: asciiType,
 	}
-	fmt.Println(GameData.toFind)
 	GameData = reveal(GameData)
 	game(GameData)
 }
 func game(data HangManData) {
 	var letter string
-
 	for !finish(data) {
 		fmt.Print("Choose: ")
 		fmt.Scanln(&letter)
