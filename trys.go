@@ -22,7 +22,6 @@ func trys(data HangManData, testLetter string) HangManData {
 	fmt.Println(data.word)
 	return data
 }
-
 func findIndexLetter(TestLetter string, Words string) []int {
 	Index := []int{}
 	for i := 0; i < len(Words); i++ {
@@ -32,7 +31,6 @@ func findIndexLetter(TestLetter string, Words string) []int {
 	}
 	return Index
 }
-
 func convertInStr(liste []string) string {
 	finalWord := ""
 	for i := 0; i < len(liste); i++ {
@@ -40,7 +38,6 @@ func convertInStr(liste []string) string {
 	}
 	return finalWord
 }
-
 func isGood(str string, test string) bool {
 	for i := 0; i < len(str); i++ {
 		if str[i] == test[0] {
@@ -49,17 +46,27 @@ func isGood(str string, test string) bool {
 	}
 	return false
 }
-
 func finish(data HangManData) bool {
-	if data.word == data.toFind {
+	word := ""
+	for i := 0; i < len(data.word); i++ {
+		if i < len(word)-3 && string(data.word[i]) == " " && string(data.word[i+1]) == " " && string(data.word[i+2]) == " " {
+			word += " "
+		}
+		if string(data.word[i]) != " " && string(data.word[i]) != "_" {
+			word += string(data.word[i])
+		}
+	}
+	if word == data.toFind {
+		return true
+	}
+	if data.attempts == 10 {
 		return true
 	}
 	return false
 }
-
 func isUsed(data HangManData, letter string) bool {
 	for i := 0; i < len(data.used); i++ {
-		if data.used[i] == rune(letter[0]) || letter[0] == ' ' {
+		if data.used[i] == rune(letter[0]) {
 			return true
 		}
 	}
