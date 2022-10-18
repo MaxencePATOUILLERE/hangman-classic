@@ -8,7 +8,10 @@ import (
 )
 
 func getFileWords(path string) string {
-	f, _ := os.Open(path)
+	f, err := os.Open(path)
+	if err != nil {
+		panic("Bad parameter")
+	}
 	scanner := bufio.NewScanner(f)
 	var result []string
 	cpt := 0

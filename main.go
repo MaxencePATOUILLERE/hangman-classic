@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"os"
 	"time"
 )
 
@@ -14,7 +15,12 @@ type HangManData struct {
 }
 
 func main() {
-	word := formatWord(getFileWords("words.txt"))
+	args := os.Args
+	if len(args) != 2 {
+		fmt.Println("Bad Parameter")
+		return
+	}
+	word := formatWord(getFileWords(args[1]))
 	hidden := ""
 	for i := 0; i < len(word); i++ {
 		if word[i] == ' ' {
