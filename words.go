@@ -8,7 +8,10 @@ import (
 )
 
 func getFileWords(path string) string {
-	f, _ := os.Open(path)
+	f, err := os.Open(path)
+	if err != nil {
+		panic("Bad Parameter")
+	}
 	scanner := bufio.NewScanner(f)
 	var result []string
 	cpt := 0
@@ -20,7 +23,6 @@ func getFileWords(path string) string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	return result[r.Intn(cpt)]
 }
-
 func formatWord(word string) string {
 	sSlice := []rune(word)
 	for i := 0; i < len(sSlice); i++ {
