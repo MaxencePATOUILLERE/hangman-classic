@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"math/rand"
@@ -17,16 +18,21 @@ type HangManData struct {
 }
 
 func main() {
+	var filePath *string
+	if len(os.Args) > 2 {
+		filePath = flag.String("startWith", os.Args[3], "File to read to start")
+	}
 	var GameData HangManData
 	args := os.Args
-	if len(args) > 2 {
-		jsonFile, err := os.Open("save.json")
+	if filePath != nil {
+		jsonFile, err := os.Open(*filePath)
 		if err != nil {
 			fmt.Println(err)
 		}
 		defer jsonFile.Close()
 		byteValue, _ := ioutil.ReadAll(jsonFile)
 		json.Unmarshal(byteValue, &GameData)
+		fmt.Println("Welcome Back, you have " + string(rune(GameData.Attempts)+48) + " attempts remaining.")
 	} else {
 		word := formatWord(getFileWords(args[1]))
 		hidden := ""
@@ -46,10 +52,10 @@ func main() {
 		GameData = reveal(GameData)
 	}
 	fmt.Println(GameData.Word)
-	game(GameData)
+	game(GameData, filePath)
 }
 
-func game(data HangManData) {
+func game(data HangManData, path *string) {
 	var letter string
 	for !finish(data) {
 		fmt.Print("Choose: ")
@@ -65,6 +71,29 @@ func game(data HangManData) {
 				printHangMan(data.Attempts)
 			}
 			data.Used = append(data.Used, rune(letter[0]))
+		} else if letter == "STOP" || letter == "stop" || letter == "Stop" {
+			if path != nil {
+				content, _ := json.MarshalIndent(data, "", " ")
+				_, err := os.Stat(*path)
+				if err == nil {
+					os.Remove(*path)
+					_ = ioutil.WriteFile(*path, content, 0644)
+				} else {
+					os.Remove(*path + ".txt")
+					_ = ioutil.WriteFile(*path+".txt", content, 0644)
+				}
+				fmt.Println("Game Saved in " + *path)
+				return
+			}
+			var name string
+			goodName := false
+			for !goodName {
+				fmt.Print("Choose a filename to save : ")
+				fmt.Scanln(&name)
+				goodName = save(data, name)
+			}
+			fmt.Println("Game Saved in " + name + ".txt")
+			return
 		} else {
 			fmt.Println("Bad input")
 		}
@@ -84,8 +113,8 @@ func reveal(data HangManData) HangManData {
 		if isNotIn(letter, data.Used) {
 			cpt++
 			data = tryWithoutOut(string(letter), data)
+			data.Used = append(data.Used, letter)
 		}
-		data.Used = append(data.Used, letter)
 	}
 	return data
 }
@@ -121,4 +150,29 @@ func isValid(l rune) bool {
 		return true
 	}
 	return false
+}
+
+func save(data HangManData, name string) bool {
+	isExist := false
+	_, err := os.Stat(name + ".txt")
+	if err != nil {
+		isExist = true
+	}
+	_, err = os.Stat(name)
+	if err != nil {
+		isExist = true
+	}
+	if isExist {
+		var choice string
+		fmt.Print("File already exist overwrite it ? (Y/N) ")
+		fmt.Scanln(&choice)
+		if choice == "Y" || choice == "y" || choice == "Yes" || choice == "yes" {
+			os.Remove(name + ".txt")
+		} else {
+			return false
+		}
+	}
+	content, _ := json.MarshalIndent(data, "", " ")
+	_ = ioutil.WriteFile(name+".txt", content, 0644)
+	return true
 }
