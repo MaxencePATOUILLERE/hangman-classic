@@ -6,13 +6,13 @@ import (
 	"os"
 )
 
-func printASCIIArt(data HangManData, typeAscii string) {
+func printASCIIArt(data HangManData) {
 	var f *os.File
-	if typeAscii == "standard" {
+	if data.asciiType == "standard.txt" {
 		f, _ = os.Open("standard.txt")
-	} else if typeAscii == "shadow" {
+	} else if data.asciiType == "shadow.txt" {
 		f, _ = os.Open("shadow.txt")
-	} else if typeAscii == "thinkertoy" {
+	} else if data.asciiType == "thinkertoy.txt" {
 		f, _ = os.Open("thinkertoy.txt")
 	}
 	scanner := bufio.NewScanner(f)
