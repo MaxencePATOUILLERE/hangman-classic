@@ -1,10 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"math/rand"
 	"os"
 	"time"
@@ -18,38 +19,13 @@ type HangManData struct {
 }
 
 func main() {
-	var filePath *string
-	if len(os.Args) > 2 {
-		filePath = flag.String("startWith", os.Args[3], "File to read to start")
-	}
 	var GameData HangManData
-	args := os.Args
-	if filePath != nil {
-		jsonFile, err := os.Open(*filePath)
-		if err != nil {
-			fmt.Println(err)
-		}
-		defer jsonFile.Close()
-		byteValue, _ := ioutil.ReadAll(jsonFile)
-		json.Unmarshal(byteValue, &GameData)
-		fmt.Println("Welcome Back, you have " + string(rune(GameData.Attempts)+48) + " attempts remaining.")
+	var filePath *string
+	if len(os.Args) > 3 && isAlreadyExist(os.Args[3]) && isFileValid(os.Args[3]) {
+		filePath = flag.String("startWith", os.Args[3], "File to read to start")
+		GameData = getFileData(filePath)
 	} else {
-		word := formatWord(getFileWords(args[1]))
-		hidden := ""
-		for i := 0; i < len(word); i++ {
-			if word[i] == ' ' {
-				hidden += " "
-			} else {
-				hidden += "_"
-			}
-			hidden += " "
-		}
-		GameData = HangManData{
-			Word:     hidden,
-			ToFind:   word,
-			Attempts: 0,
-		}
-		GameData = reveal(GameData)
+		GameData = createGameData(os.Args)
 	}
 	fmt.Println(GameData.Word)
 	game(GameData, filePath)
@@ -73,26 +49,13 @@ func game(data HangManData, path *string) {
 			data.Used = append(data.Used, rune(letter[0]))
 		} else if letter == "STOP" || letter == "stop" || letter == "Stop" {
 			if path != nil {
-				content, _ := json.MarshalIndent(data, "", " ")
-				_, err := os.Stat(*path)
-				if err == nil {
-					os.Remove(*path)
-					_ = ioutil.WriteFile(*path, content, 0644)
-				} else {
-					os.Remove(*path + ".txt")
-					_ = ioutil.WriteFile(*path+".txt", content, 0644)
-				}
-				fmt.Println("Game Saved in " + *path)
+				saveWithPath(data, path)
 				return
 			}
-			var name string
-			goodName := false
-			for !goodName {
-				fmt.Print("Choose a filename to save : ")
-				fmt.Scanln(&name)
-				goodName = save(data, name)
+			good := true
+			for good {
+				good = !save(data)
 			}
-			fmt.Println("Game Saved in " + name + ".txt")
 			return
 		} else {
 			fmt.Println("Bad input")
@@ -101,6 +64,9 @@ func game(data HangManData, path *string) {
 	if data.Attempts == 10 {
 		print("You failed the word was : " + data.ToFind)
 		return
+	}
+	if path != nil {
+		saveWithPath(data, path)
 	}
 	print("Congrats !")
 }
@@ -120,7 +86,7 @@ func reveal(data HangManData) HangManData {
 }
 
 func tryWithoutOut(testLetter string, data HangManData) HangManData {
-	listemystery := []string{}
+	var listemystery []string
 	editedToFind := ""
 	for i := 0; i < len(data.ToFind); i++ {
 		editedToFind = editedToFind + string(data.ToFind[i]) + " "
@@ -152,17 +118,11 @@ func isValid(l rune) bool {
 	return false
 }
 
-func save(data HangManData, name string) bool {
-	isExist := false
-	_, err := os.Stat(name + ".txt")
-	if err != nil {
-		isExist = true
-	}
-	_, err = os.Stat(name)
-	if err != nil {
-		isExist = true
-	}
-	if isExist {
+func save(data HangManData) bool {
+	var name string
+	fmt.Print("Choose a valid filename to save : ")
+	fmt.Scanln(&name)
+	if !isAlreadyExist(name) {
 		var choice string
 		fmt.Print("File already exist overwrite it ? (Y/N) ")
 		fmt.Scanln(&choice)
@@ -173,6 +133,84 @@ func save(data HangManData, name string) bool {
 		}
 	}
 	content, _ := json.MarshalIndent(data, "", " ")
-	_ = ioutil.WriteFile(name+".txt", content, 0644)
+	_ = os.WriteFile(name+".txt", content, 0644)
+	fmt.Println("Game Saved in " + name + ".txt")
+	return true
+}
+
+func isAlreadyExist(path string) bool {
+	_, err := os.Stat(path + ".txt")
+	if err != nil {
+		return true
+	}
+	return false
+}
+
+func saveWithPath(data HangManData, path *string) {
+	if path != nil {
+		content, _ := json.MarshalIndent(data, "", " ")
+		if isAlreadyExist(*path) || isAlreadyExist(*path+".txt") {
+			_ = os.Remove(*path)
+			_ = os.WriteFile(*path, content, 0644)
+		} else {
+			_ = os.Remove(*path + ".txt")
+			_ = os.WriteFile(*path+".txt", content, 0644)
+		}
+		fmt.Println("Game Saved in " + *path)
+		return
+	}
+}
+
+func createGameData(args []string) HangManData {
+	var GameData HangManData
+	if !isFileValid(args[3]) {
+		panic("Bad argument")
+	}
+	word := formatWord(getFileWords(args[1]))
+	hidden := ""
+	for i := 0; i < len(word); i++ {
+		if word[i] == ' ' {
+			hidden += " "
+		} else {
+			hidden += "_"
+		}
+		hidden += " "
+	}
+	GameData = HangManData{
+		Word:     hidden,
+		ToFind:   word,
+		Attempts: 0,
+	}
+	GameData = reveal(GameData)
+	return GameData
+}
+
+func getFileData(file *string) HangManData {
+	var GameData HangManData
+	jsonFile, err := os.Open(*file)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer jsonFile.Close()
+	byteValue, _ := io.ReadAll(jsonFile)
+	json.Unmarshal(byteValue, &GameData)
+	fmt.Println("Welcome Back, you have " + string(rune(GameData.Attempts)+48) + " attempts remaining.")
+	return GameData
+}
+
+func isFileValid(file string) bool {
+	fileinfo, _ := os.Stat(file)
+	fileContent, _ := os.Open(file)
+	scanner := bufio.NewScanner(fileContent)
+	var result []string
+	cpt := 0
+	for scanner.Scan() {
+		line := scanner.Text()
+		result = append(result, line)
+		cpt++
+	}
+	if fileinfo.Size() == 0 {
+		return false
+	}
 	return true
 }
