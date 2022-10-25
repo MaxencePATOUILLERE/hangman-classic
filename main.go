@@ -1,63 +1,49 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"math/rand"
-	"os"
 	"time"
 )
 
 type HangManData struct {
-	word     string // Word composed of '_', ex: H_ll_
-	toFind   string // Final word chosen by the program at the beginning. It is the word to find
-	attempts int    // Number of attempts left
+	word     string
+	toFind   string
+	attempts int
 	used     []rune
 }
 
 func main() {
-	args := os.Args
-	if len(args) != 2 {
-		fmt.Println("Bad Parameter")
+	var wordList string
+	flag.StringVar(&wordList, "wordlist", "words.txt", "Wordlist to the hangman")
+	flag.Parse()
+	setup(wordList)
+}
+
+func setup(wl string) {
+	word := formatWord(getFileWords(wl))
+	if word == "" {
+		fmt.Println("Invalid File : " + wl + "\nSupported files are json and txt")
 		return
 	}
-	word := formatWord(getFileWords(args[1]))
-	hidden := ""
-	for i := 0; i < len(word); i++ {
-		if word[i] == ' ' {
-			hidden += " "
-		} else {
-			hidden += "_"
-		}
-		hidden += " "
-	}
 	GameData := HangManData{
-		word:     hidden,
+		word:     genHidden(word),
 		toFind:   word,
 		attempts: 0,
 	}
 	GameData = reveal(GameData)
-	fmt.Println(GameData.word)
+	printWord(GameData.word)
 	game(GameData)
 }
+
 func game(data HangManData) {
-	var letter string
+	var letterIn string
 	for !finish(data) {
 		fmt.Print("Choose: ")
-		fmt.Scanln(&letter)
-		if len(letter) == 1 && letter[0] != ' ' && isValid(rune(letter[0])) {
-			if isUsed(data, letter) {
-				fmt.Println("Letter already used.")
-			} else if isGood(data.toFind, string(letter)) {
-				newData := trys(data, letter)
-				data.word = newData.word
-			} else {
-				data.attempts++
-				printHangMan(data.attempts)
-			}
-			data.used = append(data.used, rune(letter[0]))
-		} else {
-			fmt.Println("Bad input")
-		}
+		fmt.Scan(&letterIn)
+		letter := rune(letterIn[0])
+		data = checkInput(data, letter)
 	}
 	if data.attempts == 10 {
 		print("You failed the word was : " + data.toFind)
@@ -71,40 +57,12 @@ func reveal(data HangManData) HangManData {
 	for cpt < len(data.toFind)/2-1 {
 		r := rand.New(rand.NewSource(time.Now().UnixNano()))
 		letter := rune(data.toFind[r.Intn(len(data.toFind))])
-		if isNotIn(letter, data.used) {
+		if !isUsed(data, letter) {
 			cpt++
-			data = tryWithoutOut(string(letter), data)
-		}
-		data.used = append(data.used, letter)
-	}
-	return data
-}
-
-func tryWithoutOut(testLetter string, data HangManData) HangManData {
-	listemystery := []string{}
-	editedToFind := ""
-	for i := 0; i < len(data.toFind); i++ {
-		editedToFind = editedToFind + string(data.toFind[i]) + " "
-	}
-	Index := findIndexLetter(testLetter, editedToFind)
-	for i := 0; i < len(data.word); i++ {
-		listemystery = append(listemystery, string(data.word[i]))
-
-	}
-	for i := 0; i < len(Index); i++ {
-		listemystery[Index[i]] = testLetter
-	}
-	data.word = convertInStr(listemystery)
-	return data
-}
-
-func isNotIn(l rune, lst []rune) bool {
-	for i := 0; i < len(lst); i++ {
-		if lst[i] == l {
-			return false
+			data = trys(data, letter, false)
 		}
 	}
-	return true
+	return data
 }
 
 func isValid(l rune) bool {
@@ -112,4 +70,30 @@ func isValid(l rune) bool {
 		return true
 	}
 	return false
+}
+
+func finish(data HangManData) bool {
+	if data.word == data.toFind {
+		return true
+	} else if data.attempts == 10 {
+		return true
+	}
+	return false
+}
+
+func checkInput(data HangManData, l rune) HangManData {
+	if l != ' ' && isValid(l) {
+		if isUsed(data, l) {
+			fmt.Println("Letter already used.")
+		} else if isGood(data.toFind, l) {
+			data = trys(data, l, true)
+		} else {
+			data.attempts++
+			data.used = append(data.used, l)
+			printHangMan(data.attempts)
+		}
+	} else {
+		fmt.Println("Bad input")
+	}
+	return data
 }

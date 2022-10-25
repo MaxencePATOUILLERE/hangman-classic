@@ -20,3 +20,11 @@ func printHangMan(failAttempts int) {
 	}
 	fmt.Println("Not present in the word,", 10-failAttempts, "attempts remaining")
 }
+
+func printWord(w string) {
+	for i := 0; i < len(w); i++ {
+		fmt.Print(string(w[i]))
+		fmt.Print(" ")
+	}
+	fmt.Println()
+}
