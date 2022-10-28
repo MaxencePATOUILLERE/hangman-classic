@@ -1,23 +1,29 @@
 package main
 
+import "fmt"
+
 func trys(data HangManData, testLetter string) HangManData {
 	if isUsed(data, testLetter) {
 		return data
 	}
-	listemystery := []string{}
+	listmystery := []string{}
 	editedToFind := ""
 	for i := 0; i < len(data.toFind); i++ {
 		editedToFind = editedToFind + string(data.toFind[i]) + " "
 	}
 	Index := findIndexLetter(testLetter, editedToFind)
 	for i := 0; i < len(data.word); i++ {
-		listemystery = append(listemystery, string(data.word[i]))
+		listmystery = append(listmystery, string(data.word[i]))
 	}
 	for i := 0; i < len(Index); i++ {
-		listemystery[Index[i]] = testLetter
+		listmystery[Index[i]] = testLetter
 	}
-	data.word = convertInStr(listemystery)
-	printASCIIArt(data)
+	data.word = convertInStr(listmystery)
+	if data.asciiType == "" {
+		fmt.Println(data.word)
+	} else {
+		printASCIIArt(data)
+	}
 	return data
 }
 
@@ -49,7 +55,19 @@ func isGood(str string, test string) bool {
 }
 
 func finish(data HangManData) bool {
-	if data.word == data.toFind {
+	word := ""
+	for i := 0; i < len(data.word); i++ {
+		if i < len(word)-3 && string(data.word[i]) == " " && string(data.word[i+1]) == " " && string(data.word[i+2]) == " " {
+			word += " "
+		}
+		if string(data.word[i]) != " " && string(data.word[i]) != "_" {
+			word += string(data.word[i])
+		}
+	}
+	if word == data.toFind {
+		return true
+	}
+	if data.attempts == 10 {
 		return true
 	}
 	return false
