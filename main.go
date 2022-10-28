@@ -37,7 +37,7 @@ func main() {
 		toFind:    word,
 		attempts:  0,
 	}
-	if len(args) == 4 {
+	if args[2] == "--letterFile" {
 		GameData = HangManData{
 			asciiType: os.Args[3],
 			word:      hidden,
