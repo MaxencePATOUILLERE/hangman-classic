@@ -17,12 +17,11 @@ type HangManData struct {
 
 func main() {
 	args := os.Args
-	if len(args) != 4 {
+	if args[2] != "--letterFile" && len(args) != 2 || len(args) != 4 {
 		fmt.Println("Bad Parameter")
 		return
 	}
 	word := formatWord(getFileWords(args[1]))
-
 	hidden := ""
 	for i := 0; i < len(word); i++ {
 		if word[i] == ' ' {
@@ -33,15 +32,27 @@ func main() {
 		hidden += " "
 	}
 	GameData := HangManData{
-		asciiType: os.Args[3],
+		asciiType: "",
 		word:      hidden,
 		toFind:    word,
 		attempts:  0,
 	}
-	GameData = reveal(GameData)
-	printASCIIArt(GameData)
+	if len(args) == 4 {
+		GameData = HangManData{
+			asciiType: os.Args[3],
+			word:      hidden,
+			toFind:    word,
+			attempts:  0,
+		}
+		GameData = reveal(GameData)
+		printASCIIArt(GameData)
+	} else {
+		GameData = reveal(GameData)
+		fmt.Println(GameData.word)
+	}
 	game(GameData)
 }
+
 func game(data HangManData) {
 	var letter string
 	for !finish(data) {
@@ -55,20 +66,24 @@ func game(data HangManData) {
 				data.word = newData.word
 			} else {
 				data.attempts++
+				if data.asciiType == "" {
+					fmt.Println(data.word)
+				} else {
+					printASCIIArt(data)
+				}
 				printHangMan(data.attempts)
 			}
 			data.used = append(data.used, rune(letter[0]))
 		} else {
 			fmt.Println("Bad input")
 		}
-		if data.attempts == 10 {
-			print("You failed the word was : " + data.toFind)
-			return
-		}
 	}
-	if finish(data) == true {
-		print("Congrats !")
+	if data.attempts == 10 {
+		print("You failed the word was : " + data.toFind)
+		return
 	}
+	print("Congrats !")
+	return
 }
 
 func reveal(data HangManData) HangManData {
