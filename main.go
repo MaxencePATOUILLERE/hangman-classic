@@ -8,17 +8,28 @@ import (
 )
 
 type HangManData struct {
-	word     string
-	toFind   string
-	attempts int
-	used     []rune
+	Save     string
+	File     string
+	Word     string
+	ToFind   string
+	Attempts int
+	Used     []rune
 }
 
 func main() {
 	var wordList string
+	var saveFile string
 	flag.StringVar(&wordList, "wordlist", "words.txt", "Wordlist to the hangman")
+	flag.StringVar(&saveFile, "startWith", "", "Save file for the hangman")
 	flag.Parse()
-	setup(wordList)
+	if saveFile != "" && isFileValid(saveFile) {
+		GameData := getFileData(&saveFile)
+		game(GameData)
+	} else {
+		printStart()
+		fmt.Println("No valid file given, start a new game ... ")
+		setup(wordList)
+	}
 }
 
 func setup(wl string) {
@@ -28,12 +39,14 @@ func setup(wl string) {
 		return
 	}
 	GameData := HangManData{
-		word:     genHidden(word),
-		toFind:   word,
-		attempts: 0,
+		Save:     "",
+		File:     wl,
+		Word:     genHidden(word),
+		ToFind:   word,
+		Attempts: 0,
 	}
 	GameData = reveal(GameData)
-	printWord(GameData.word)
+	printWord(GameData.Word)
 	game(GameData)
 }
 
@@ -42,11 +55,24 @@ func game(data HangManData) {
 	for !finish(data) {
 		fmt.Print("Choose: ")
 		fmt.Scan(&letterIn)
+		if letterIn == "STOP" || letterIn == "stop" || letterIn == "Stop" {
+			if data.Save != "" {
+				saveWithPath(data, data.Save)
+				return
+			}
+			good := true
+			for good {
+				good = !save(data)
+			}
+			return
+		}
 		letter := rune(letterIn[0])
+		fmt.Print("\033[H\033[2J")
 		data = checkInput(data, letter)
+		printWord(data.Word)
 	}
-	if data.attempts == 10 {
-		print("You failed the word was : " + data.toFind)
+	if data.Attempts == 10 {
+		print("You failed the word was : " + data.ToFind)
 		return
 	}
 	print("Congrats !")
@@ -54,12 +80,12 @@ func game(data HangManData) {
 
 func reveal(data HangManData) HangManData {
 	var cpt = 0
-	for cpt < len(data.toFind)/2-1 {
+	for cpt < len(data.ToFind)/2-1 {
 		r := rand.New(rand.NewSource(time.Now().UnixNano()))
-		letter := rune(data.toFind[r.Intn(len(data.toFind))])
+		letter := rune(data.ToFind[r.Intn(len(data.ToFind))])
 		if !isUsed(data, letter) {
 			cpt++
-			data = trys(data, letter, false)
+			data = trys(data, letter)
 		}
 	}
 	return data
@@ -73,9 +99,9 @@ func isValid(l rune) bool {
 }
 
 func finish(data HangManData) bool {
-	if data.word == data.toFind {
+	if data.Word == data.ToFind {
 		return true
-	} else if data.attempts == 10 {
+	} else if data.Attempts == 10 {
 		return true
 	}
 	return false
@@ -84,16 +110,23 @@ func finish(data HangManData) bool {
 func checkInput(data HangManData, l rune) HangManData {
 	if l != ' ' && isValid(l) {
 		if isUsed(data, l) {
+			printHangMan(data.Attempts)
 			fmt.Println("Letter already used.")
-		} else if isGood(data.toFind, l) {
-			data = trys(data, l, true)
+			return data
+		} else if isGood(data.ToFind, l) {
+			data = trys(data, l)
+
 		} else {
-			data.attempts++
-			data.used = append(data.used, l)
-			printHangMan(data.attempts)
+			data.Attempts++
+			data.Used = append(data.Used, l)
+			printHangMan(data.Attempts)
+			fmt.Println("Not present in the word,", 10-data.Attempts, "attempts remaining")
+			return data
 		}
 	} else {
 		fmt.Println("Bad input")
+
 	}
+	printHangMan(data.Attempts)
 	return data
 }

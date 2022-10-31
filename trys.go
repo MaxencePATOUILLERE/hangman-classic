@@ -1,23 +1,20 @@
 package main
 
-func trys(data HangManData, testLetter rune, print bool) HangManData {
+func trys(data HangManData, testLetter rune) HangManData {
 	if testLetter >= 'A' && testLetter <= 'Z' {
 		testLetter += 32
 	}
-	Index := findIndexLetter(testLetter, data.toFind)
-	addedLetter := []rune(data.word)
-	for i := 0; i < len(data.word); i++ {
+	Index := findIndexLetter(testLetter, data.ToFind)
+	addedLetter := []rune(data.Word)
+	for i := 0; i < len(data.Word); i++ {
 		for j := 0; j < len(Index); j++ {
 			if i == Index[j] {
 				addedLetter[i] = testLetter
 			}
 		}
 	}
-	data.word = convertInStr(addedLetter)
-	data.used = append(data.used, testLetter)
-	if print {
-		printWord(data.word)
-	}
+	data.Word = convertInStr(addedLetter)
+	data.Used = append(data.Used, testLetter)
 	return data
 }
 
@@ -49,8 +46,8 @@ func isGood(str string, test rune) bool {
 }
 
 func isUsed(data HangManData, letter rune) bool {
-	for i := 0; i < len(data.used); i++ {
-		if data.used[i] == letter {
+	for i := 0; i < len(data.Used); i++ {
+		if data.Used[i] == letter {
 			return true
 		}
 	}
