@@ -55,21 +55,26 @@ func game(data HangManData) {
 	for !finish(data) {
 		fmt.Print("Choose: ")
 		fmt.Scan(&letterIn)
-		if letterIn == "STOP" || letterIn == "stop" || letterIn == "Stop" {
-			if data.Save != "" {
-				saveWithPath(data, data.Save)
+		if len(letterIn) > 1 {
+			if letterIn == "STOP" || letterIn == "stop" || letterIn == "Stop" {
+				if data.Save != "" {
+					saveWithPath(data, data.Save)
+					return
+				}
+				good := true
+				for good {
+					good = !save(data)
+				}
 				return
+			} else {
+				data = guessWord(data, letterIn)
 			}
-			good := true
-			for good {
-				good = !save(data)
-			}
-			return
+		} else {
+			letter := rune(letterIn[0])
+			fmt.Print("\033[H\033[2J")
+			data = checkInput(data, letter)
+			printWord(data.Word)
 		}
-		letter := rune(letterIn[0])
-		fmt.Print("\033[H\033[2J")
-		data = checkInput(data, letter)
-		printWord(data.Word)
 	}
 	if data.Attempts == 10 {
 		print("You failed the word was : " + data.ToFind)

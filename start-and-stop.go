@@ -70,7 +70,6 @@ func getFileData(file *string) HangManData {
 }
 
 func isFileValid(file string) bool {
-	fileinfo, _ := os.Stat(file)
 	fileContent, _ := os.Open(file)
 	scanner := bufio.NewScanner(fileContent)
 	var result []string
@@ -81,9 +80,6 @@ func isFileValid(file string) bool {
 		cpt++
 	}
 	if !isAlreadyExist(file) {
-		return false
-	}
-	if fileinfo.Size() == 0 {
 		return false
 	}
 	if !isValidJSON(getFileData(&file)) {
