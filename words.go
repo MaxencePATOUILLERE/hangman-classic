@@ -10,7 +10,7 @@ import (
 func getFileWords(path string) string {
 	f, err := os.Open(path)
 	if err != nil {
-		panic("Bad Parameter")
+		return ""
 	}
 	scanner := bufio.NewScanner(f)
 	var result []string
@@ -32,4 +32,16 @@ func formatWord(word string) string {
 		}
 	}
 	return string(sSlice)
+}
+
+func genHidden(w string) string {
+	hidden := ""
+	for i := 0; i < len(w); i++ {
+		if w[i] == ' ' {
+			hidden += " "
+		} else {
+			hidden += "_"
+		}
+	}
+	return hidden
 }

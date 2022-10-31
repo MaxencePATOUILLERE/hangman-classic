@@ -18,5 +18,18 @@ func printHangMan(failAttempts int) {
 	for i := 0; i < 8; i++ {
 		fmt.Println(result[i+8*(failAttempts-1)])
 	}
-	fmt.Println("Not present in the word,", 10-failAttempts, "attempts remaining")
+}
+
+func printWord(w string) {
+	for i := 0; i < len(w); i++ {
+		fmt.Print(string(w[i]))
+		fmt.Print(" ")
+	}
+	fmt.Println()
+}
+
+func printStart() {
+	fmt.Println("------------------------------")
+	fmt.Println("      Welcome to Hangman      ")
+	fmt.Println("------------------------------")
 }
