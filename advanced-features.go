@@ -23,6 +23,6 @@ func guessWord(data HangManData, letter string) HangManData {
 		printHangMan(data.Attempts)
 		fmt.Println("Bad input try again")
 	}
-	printWord(data.Word, data.WhichAsciiArt)
+	printWord(data)
 	return data
 }

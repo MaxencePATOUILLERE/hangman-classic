@@ -7,16 +7,16 @@ import (
 	"os"
 )
 
-func printASCIIArt(Word string, letterFile string) {
-	file := openFile(letterFile)
+func printASCIIArt(data HangManData) {
+	file := openFile(data.WhichAsciiArt)
 	for j := 0; j < 8; j++ {
 		line := []string{}
-		for i := 0; i < len(Word); i++ {
-			if Word[i] == '_' {
+		for i := 0; i < len(data.Word); i++ {
+			if data.Word[i] == '_' {
 				line = append(line, file[116+j])
-			} else if Word[i] == ' ' {
+			} else if data.Word[i] == ' ' {
 			} else {
-				line = append(line, file[586+j+int(rune(Word[i]-97)*9)])
+				line = append(line, file[586+j+int(rune(data.Word[i]-97)*9)])
 			}
 		}
 		finalWord := ""

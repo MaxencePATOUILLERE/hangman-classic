@@ -19,12 +19,12 @@ func printHangMan(failAttempts int) {
 	}
 }
 
-func printWord(w string, letterFile string) {
-	if letterFile != "" {
-		printASCIIArt(w, letterFile)
+func printWord(data HangManData) {
+	if data.WhichAsciiArt != "" {
+		printASCIIArt(data)
 	} else {
-		for i := 0; i < len(w); i++ {
-			fmt.Print(string(w[i]))
+		for i := 0; i < len(data.Word); i++ {
+			fmt.Print(string(data.Word[i]))
 			fmt.Print(" ")
 		}
 	}

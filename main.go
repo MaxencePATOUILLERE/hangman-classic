@@ -27,6 +27,10 @@ func main() {
 	flag.Parse()
 	if saveFile != "" && isFileValid(saveFile) {
 		GameData := getFileData(&saveFile)
+		if letterFile != "" {
+			GameData.WhichAsciiArt = letterFile
+		}
+		printWord(GameData)
 		game(GameData)
 	} else {
 		printStart()
@@ -50,7 +54,7 @@ func setup(wl string, letterFile string) {
 		WhichAsciiArt: letterFile,
 	}
 	GameData = reveal(GameData)
-	printWord(GameData.Word, letterFile)
+	printWord(GameData)
 	game(GameData)
 }
 
@@ -77,7 +81,7 @@ func game(data HangManData) {
 			letter := rune(letterIn[0])
 			fmt.Print("\033[H\033[2J")
 			data = checkInput(data, letter)
-			printWord(data.Word, data.WhichAsciiArt)
+			printWord(data)
 		}
 	}
 	if data.Attempts == 10 {
@@ -124,7 +128,6 @@ func checkInput(data HangManData, l rune) HangManData {
 			return data
 		} else if isGood(data.ToFind, l) {
 			data = trys(data, l)
-
 		} else {
 			data.Attempts++
 			data.Used = append(data.Used, l)
@@ -134,8 +137,8 @@ func checkInput(data HangManData, l rune) HangManData {
 		}
 	} else {
 		fmt.Println("Bad input")
-
 	}
 	printHangMan(data.Attempts)
+
 	return data
 }

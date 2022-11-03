@@ -63,8 +63,7 @@ func getFileData(file *string) HangManData {
 	}
 	fmt.Print("\033[H\033[2J")
 	printStart()
-	fmt.Println("Welcome Back, you have " + string(10-rune(GameData.Attempts)+48) + " attempts remaining.")
-	printWord(GameData.Word, GameData.WhichAsciiArt)
+	fmt.Println("Welcome Back, you have " + string(rune(GameData.Attempts)+48) + " attempts remaining.")
 	GameData.Save = *file
 	return GameData
 }
