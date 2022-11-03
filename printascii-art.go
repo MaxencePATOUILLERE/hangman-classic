@@ -9,14 +9,14 @@ import (
 
 func printASCIIArt(Word string, letterFile string) {
 	file := openFile(letterFile)
-	for j := 0; j < 7; j++ {
+	for j := 0; j < 8; j++ {
 		line := []string{}
 		for i := 0; i < len(Word); i++ {
 			if Word[i] == '_' {
 				line = append(line, file[116+j])
 			} else if Word[i] == ' ' {
 			} else {
-				line = append(line, file[298+j+int(rune(Word[i]-97)*9)])
+				line = append(line, file[586+j+int(rune(Word[i]-97)*9)])
 			}
 		}
 		finalWord := ""
