@@ -8,19 +8,22 @@ import (
 )
 
 type HangManData struct {
-	Save     string
-	File     string
-	Word     string
-	ToFind   string
-	Attempts int
-	Used     []rune
+	Save          string
+	File          string
+	Word          string
+	ToFind        string
+	Attempts      int
+	Used          []rune
+	WhichAsciiArt string
 }
 
 func main() {
 	var wordList string
 	var saveFile string
+	var letterFile string
 	flag.StringVar(&wordList, "wordlist", "words.txt", "Wordlist to the hangman")
 	flag.StringVar(&saveFile, "startWith", "", "Save file for the hangman")
+	flag.StringVar(&letterFile, "letterFile", "", "Choose the type of ascii art")
 	flag.Parse()
 	if saveFile != "" && isFileValid(saveFile) {
 		GameData := getFileData(&saveFile)
@@ -28,25 +31,26 @@ func main() {
 	} else {
 		printStart()
 		fmt.Println("No valid file given, start a new game ... ")
-		setup(wordList)
+		setup(wordList, letterFile)
 	}
 }
 
-func setup(wl string) {
+func setup(wl string, letterFile string) {
 	word := formatWord(getFileWords(wl))
 	if word == "" {
 		fmt.Println("Invalid File : " + wl + "\nSupported files are json and txt")
 		return
 	}
 	GameData := HangManData{
-		Save:     "",
-		File:     wl,
-		Word:     genHidden(word),
-		ToFind:   word,
-		Attempts: 0,
+		Save:          "",
+		File:          wl,
+		Word:          genHidden(word),
+		ToFind:        word,
+		Attempts:      0,
+		WhichAsciiArt: letterFile,
 	}
 	GameData = reveal(GameData)
-	printWord(GameData.Word)
+	printWord(GameData.Word, letterFile)
 	game(GameData)
 }
 
@@ -73,7 +77,7 @@ func game(data HangManData) {
 			letter := rune(letterIn[0])
 			fmt.Print("\033[H\033[2J")
 			data = checkInput(data, letter)
-			printWord(data.Word)
+			printWord(data.Word, data.WhichAsciiArt)
 		}
 	}
 	if data.Attempts == 10 {

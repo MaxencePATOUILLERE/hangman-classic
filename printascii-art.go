@@ -7,24 +7,28 @@ import (
 	"os"
 )
 
-func printASCIIArt(data HangManData) {
-	file := openFile(data)
+func printASCIIArt(Word string, letterFile string) {
+	file := openFile(letterFile)
 	for j := 0; j < 7; j++ {
 		line := []string{}
-		for i := 0; i < len(data.word); i++ {
-			if data.word[i] == '_' {
+		for i := 0; i < len(Word); i++ {
+			if Word[i] == '_' {
 				line = append(line, file[116+j])
-			} else if data.word[i] == ' ' {
+			} else if Word[i] == ' ' {
 			} else {
-				line = append(line, file[298+j+int(rune(data.word[i]-97)*9)])
+				line = append(line, file[298+j+int(rune(Word[i]-97)*9)])
 			}
 		}
-		fmt.Println(convertInStr(line))
+		finalWord := ""
+		for i := 0; i < len(line); i++ {
+			finalWord = finalWord + line[i]
+		}
+		fmt.Println(finalWord)
 	}
 }
 
-func openFile(data HangManData) []string {
-	asciiType := whichTypeOfAsciiArt(data)
+func openFile(letterFile string) []string {
+	asciiType := whichTypeOfAsciiArt(letterFile)
 	scanner := bufio.NewScanner(asciiType)
 	var result []string
 	for scanner.Scan() {
@@ -34,13 +38,13 @@ func openFile(data HangManData) []string {
 	return result
 }
 
-func whichTypeOfAsciiArt(data HangManData) io.Reader {
+func whichTypeOfAsciiArt(letterFile string) io.Reader {
 	var f *os.File
-	if data.asciiType == "standard.txt" {
+	if letterFile == "standard.txt" {
 		f, _ = os.Open("standard.txt")
-	} else if data.asciiType == "shadow.txt" {
+	} else if letterFile == "shadow.txt" {
 		f, _ = os.Open("shadow.txt")
-	} else if data.asciiType == "thinkertoy.txt" {
+	} else if letterFile == "thinkertoy.txt" {
 		f, _ = os.Open("thinkertoy.txt")
 	}
 	return f
