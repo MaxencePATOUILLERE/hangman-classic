@@ -45,6 +45,10 @@ func setup(wl string, letterFile string) {
 		fmt.Println("Invalid File : " + wl + "\nSupported files are json and txt")
 		return
 	}
+	if letterFile != "standard.txt" && letterFile != "thinkertoy.txt" && letterFile != "shadow.txt" {
+		fmt.Println("Invalid File : " + letterFile + "\nThe file name must be either 'standard.txt' or 'shadow.txt' or 'thinkertoy.txt'")
+		return
+	}
 	GameData := HangManData{
 		Save:          "",
 		File:          wl,
